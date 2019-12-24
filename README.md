@@ -1,2 +1,3 @@
 # ThreadSafeDict.jl
-Thread safe Julia Dict
+A thread-safe Dict type for Julia programming
+
