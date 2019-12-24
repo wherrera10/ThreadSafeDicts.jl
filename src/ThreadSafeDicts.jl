@@ -5,6 +5,8 @@ using Distributed
 import Base.getindex, Base.setindex!, Base.get!, Base.get, Base.empty!, Base.pop!
 import Base.delete!, Base.print, Base.iterate
 
+export ThreadSafeDict
+
 """ 
     ThreadSafeDict(pairs::Vector{Pair{K,V}})   
 Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. All functions lock this lock, pass 
