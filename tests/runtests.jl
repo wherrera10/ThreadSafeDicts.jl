@@ -1,5 +1,5 @@
 
-using .ThreadSafeDicts
+using ThreadSafeDicts
 
 using Distributed
 using Test
