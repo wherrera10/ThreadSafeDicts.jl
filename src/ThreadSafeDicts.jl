@@ -15,8 +15,8 @@ arguments to the d member Dict, unlock the spinlock, and then return what is ret
 struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
     dlock::Threads.SpinLock
     d::Dict
-    ThreadSafeDict{K, V}() where V where K = ThreadSafeDict(SpinLock(), Dict{K, V}())
-    ThreadSafeDict{K, V}(itr) where V where K = ThreadSafeDict(SpinLock(), Dict{K, V}(itr))
+    ThreadSafeDict{K, V}() where V where K = ThreadSafeDict(Threads.SpinLock(), Dict{K, V}())
+    ThreadSafeDict{K, V}(itr) where V where K = ThreadSafeDict(Threads.SpinLock(), Dict{K, V}(itr))
 end
 
 function getindex(dic::ThreadSafeDict, k)
