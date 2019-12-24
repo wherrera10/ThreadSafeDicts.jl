@@ -1,21 +1,20 @@
+using Distributed
 using ThreadSafeDicts
 
-using Distributed
 using Test
-
 
 function testThreadSafeDict()
     dict = ThreadSafeDict{String,Int64}(["a" => 0, "b" => 1, "c" => 1, "d" => 2,
         "e" => 3, "f" => 5, "g" => 8, "h" => 13, "i" => 21, "j" => 34, "extra" => -1])
 
     @test dict["b"] == 1 && dict["e"] == 3
-  
-    @distributed for k in keys(dict)
-        dict[k] = dict[k] * 100
+    @Threads.threads for k in collect(keys(dict))
+        dict[k] *= 100
     end
 
     x = get!(dict, "another", 77)
     @test x == 77
+    @test dict["e"] == 300
     dict["extra"] = 0
     y = dict["extra"]
     @test y == 0
@@ -23,8 +22,9 @@ function testThreadSafeDict()
        
     empty!(dict)
     
+    sum = 0
     @sync begin
-        @distributed for i in 1:1000
+        @Threads.threads for i in 1:1000
             dict[string(i)] = i
         end 
     end
