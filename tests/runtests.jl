@@ -1,6 +1,10 @@
+
+using .ThreadSafeDicts
+
 using Distributed
 using Test
-using ThreadSafeDicts
+
+
 function testThreadSafeDict()
     dict = ThreadSafeDict{String,Int64}(["a" => 0, "b" => 1, "c" => 1, "d" => 2,
         "e" => 3, "f" => 5, "g" => 8, "h" => 13, "i" => 21, "j" => 34, "extra" => -1])
@@ -11,18 +15,25 @@ function testThreadSafeDict()
         dict[k] = dict[k] * 100
     end
 
-    x = dict["extra"]
-    @test x == -100
+    x = get!(dict, "another", 77)
+    @test x == 77
     dict["extra"] = 0
-    y = fibr["extra"]
-    @test y == 0   
+    y = dict["extra"]
+    @test y == 0
+    @test haskey(dict, "a") == true
        
     empty!(dict)
     
-    @distributed for i in 1:1000
-        dict[string(i)] = i
-    end   
-    @test length(dict) = 1000
+    @sync begin
+        @distributed for i in 1:1000
+            dict[string(i)] = i
+        end 
+    end
+    
+    @test ((x, y) = iterate(dict)) != nothing
+    @test iterate(dict, y) != nothing
+       
+    @test length(dict.d) == 1000
 end
 
-testBackedUpImmutableDict()
+testThreadSafeDict()
