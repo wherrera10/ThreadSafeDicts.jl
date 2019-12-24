@@ -5,7 +5,6 @@ version = "0.0.1"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
-Main = "bcbc596e-5f4f-5f2b-8709-ba88ce574ce3"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
