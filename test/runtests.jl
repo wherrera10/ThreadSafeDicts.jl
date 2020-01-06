@@ -6,6 +6,7 @@ using Test
 Threads.nthreads() == 1 && println("Hmm, you only have one thread allocated for Julia.")
 
 function testThreadSafeDicts()
+    dict = ThreadSafeDict()
     dict = ThreadSafeDict{String,Int64}()
     @test isempty(dict)
     dict["ten"] = 10
