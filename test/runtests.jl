@@ -6,6 +6,14 @@ using Test
 Threads.nthreads() == 1 && println("Hmm, you only have one thread allocated for Julia.")
 
 function testThreadSafeDicts()
+    dict = ThreadSafeDict{String,Int64}()
+    @test isempty(dict)
+    dict["ten"] = 10
+    dict["twenty"] = 20
+    delete!(dict, "ten")
+    println("testing printing: ", dict)
+    @test pop!(dict) == ("twenty" => 20)
+    @test isempty(dict)    
     dict = ThreadSafeDict{String,Int64}(["a" => 0, "b" => 1, "c" => 1, "d" => 2,
         "e" => 3, "f" => 5, "g" => 8, "h" => 13, "i" => 21, "j" => 34, "extra" => -1])
 
@@ -37,3 +45,4 @@ function testThreadSafeDicts()
 end
 
 testThreadSafeDicts()
+
