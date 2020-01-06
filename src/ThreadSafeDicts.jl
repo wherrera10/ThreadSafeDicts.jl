@@ -18,6 +18,7 @@ struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
     ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
     ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
 end
+ThreadSafeDict() = ThreadSafeDict{Any,Any}()
 
 function getindex(dic::ThreadSafeDict, k)
     lock(dic.dlock)
