@@ -12,7 +12,6 @@ function testThreadSafeDicts()
     dict["ten"] = 10
     dict["twenty"] = 20
     delete!(dict, "ten")
-    println("testing printing: ", dict)
     @test pop!(dict) == ("twenty" => 20)
     @test isempty(dict)    
     dict = ThreadSafeDict{String,Int64}(["a" => 0, "b" => 1, "c" => 1, "d" => 2,
@@ -43,7 +42,14 @@ function testThreadSafeDicts()
     @test iterate(dict, y) != nothing
        
     @test length(dict.d) == 1000
+    empty!(dict)
+    @sync begin
+        @Threads.threads for i in 1:1000
+            dict["number"] = i
+        end 
+    end
+    @test dict["number"] > 900
+    println("testing printing: ", dict)
 end
 
 testThreadSafeDicts()
-
