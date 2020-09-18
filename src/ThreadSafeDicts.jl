@@ -41,9 +41,9 @@ function haskey(dic::ThreadSafeDict, k)
     return b
 end
 
-function get(dic::ThreadSafeDict, k)
+function get(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
-    v = get(dic.d, k)
+    v = get(dic.d, k, v)
     unlock(dic.dlock)
     return v
 end
