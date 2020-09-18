@@ -25,6 +25,7 @@ function testThreadSafeDicts()
     x = get!(dict, "another", 77)
     @test x == 77
     @test dict["e"] == 300
+    @test get(dict, "e") == 300
     dict["extra"] = 0
     y = dict["extra"]
     @test y == 0
