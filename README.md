@@ -4,6 +4,8 @@
 
 # ThreadSafeDict.jl
 A thread-safe Dict type for Julia programming
+<br /><br />
+
 
 ## Structs and Functions
 <br />
