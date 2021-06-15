@@ -1,11 +1,15 @@
 authors = ["William Herrera <wherrera@alahonua.com>"]
 name = "ThreadSafeDicts"
 uuid = "4239201d-c60e-5e0a-9702-85d713665ba7"
-version = "0.0.2"
+version = "0.0.3"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
+[extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 
 [compat]
 julia = "1"
