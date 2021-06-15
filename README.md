@@ -5,7 +5,7 @@
 # ThreadSafeDict.jl
 A thread-safe Dict type for Julia programming
 <br />
-img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png">
+<img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png">
 <br /><br />
 
 
