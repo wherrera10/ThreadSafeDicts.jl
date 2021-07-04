@@ -24,6 +24,10 @@ A thread-safe Dict type for Julia programming
 
 Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. All functions lock this lock, pass 
 arguments to the d member Dict, unlock the spinlock, and then return what is returned by the Dict.
+
+If there are going to be a large number of threads competing to update the `Dict`, causing most of the threads to 
+be blocked at any given time, you may be better off keeping a `Dict` in a separate thread which accepts updates
+via a `Channel` of `Pair`s.  YMMMV. 
 <br /><br />
 
     getindex(dic::ThreadSafeDict, k)
