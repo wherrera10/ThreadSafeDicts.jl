@@ -46,8 +46,8 @@ function testThreadSafeDicts()
     empty!(dict)
     @sync begin
         @Threads.threads for i in 1:1000
+            sleep(rand() / 100)
             dict["number"] = i
-            sleep(0.05)
         end 
     end
     @test dict["number"] > 900
