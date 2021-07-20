@@ -1,7 +1,7 @@
 name = "ThreadSafeDicts"
 uuid = "4239201d-c60e-5e0a-9702-85d713665ba7"
 authors = ["William Herrera <wherrera@alahonua.com>"]
-version = "0.0.4"
+version = "0.0.5"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
