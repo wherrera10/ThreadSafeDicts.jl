@@ -50,7 +50,7 @@ function testThreadSafeDicts()
             dict["number"] = i
         end 
     end
-    @test dict["number"] > 400
+    @test dict["number"] >= 1000 / Threads.nthreads()
     println("testing printing: ", dict)
 end
 
