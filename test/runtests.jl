@@ -47,6 +47,7 @@ function testThreadSafeDicts()
     @sync begin
         @Threads.threads for i in 1:1000
             dict["number"] = i
+            sleep(0.005)
         end 
     end
     @test dict["number"] > 900
