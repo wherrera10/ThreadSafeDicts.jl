@@ -50,7 +50,7 @@ function testThreadSafeDicts()
             dict["number"] = i
         end 
     end
-    @test dict["number"] > 900
+    @test dict["number"] > 400
     println("testing printing: ", dict)
 end
 
