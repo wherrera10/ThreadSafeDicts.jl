@@ -3,7 +3,7 @@
 [![CI](https://github.com/wherrera10/ThreadSafeDicts.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/wherrera10/ThreadSafeDicts.jl/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/wherrera10/ThreadSafeDicts.jl/badge.svg?branch=master)](https://coveralls.io/github/wherrera10/ThreadSafeDicts.jl?branch=master)
 
-# ThreadSafeDict.jl
+# ThreadSafeDicts.jl
 A thread-safe Dict type for Julia programming
 <br />
 <img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png">
