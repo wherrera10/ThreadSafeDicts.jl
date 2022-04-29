@@ -1,7 +1,5 @@
 module ThreadSafeDicts
 
-using Distributed
-
 import Base.getindex, Base.setindex!, Base.get!, Base.get, Base.empty!, Base.pop!
 import Base.haskey, Base.delete!, Base.print, Base.iterate, Base.length
 
