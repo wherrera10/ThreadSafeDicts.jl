@@ -1,13 +1,13 @@
 name = "ThreadSafeDicts"
 uuid = "4239201d-c60e-5e0a-9702-85d713665ba7"
 authors = ["William Herrera <wherrera@alahonua.com>"]
-version = "0.0.6"
+version = "0.1.0"
 
 [compat]
 julia = "1"
+PerformanceTestTools = "0.1"
 
 [extras]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 PerformanceTestTools = "dc46b164-d16f-48ec-a853-60448fc869fe"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
