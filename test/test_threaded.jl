@@ -45,3 +45,5 @@ function testThreadSafeDicts()
     @test dict["number"] >= 1000 / Threads.nthreads()
     println("testing printing: ", dict)
 end
+
+testThreadSafeDicts()
