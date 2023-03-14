@@ -81,6 +81,11 @@ function get!(dic::ThreadSafeDict, k, v)
     return v
 end
 
+"""
+    pop!(dic::ThreadSafeDict)
+    
+remove and return a key-value pair from the Dict
+"""
 function pop!(dic::ThreadSafeDict)
     lock(dic.dlock)
     p = pop!(dic.d)
@@ -88,6 +93,11 @@ function pop!(dic::ThreadSafeDict)
     return p
 end
 
+"""
+    empty!(dic::ThreadSafeDict)
+    
+Remove all keys and values from the Dict
+"""
 function empty!(dic::ThreadSafeDict)
     lock(dic.dlock)
     d = empty!(dic.d)
@@ -95,6 +105,11 @@ function empty!(dic::ThreadSafeDict)
     return d
 end
 
+"""
+    delete!(dic::ThreadSafeDict, k)
+    
+delete key k and its value from the dict
+"""
 function delete!(dic::ThreadSafeDict, k)
     lock(dic.dlock)
     p = delete!(dic.d, k)
@@ -102,6 +117,11 @@ function delete!(dic::ThreadSafeDict, k)
     return p
 end
 
+"""
+    length(dic::ThreadSafeDict)
+    
+Return the length of the Dict, considered as a vector of key-value pairs
+"""
 function length(dic::ThreadSafeDict)
     lock(dic.dlock)
     len = length(dic.d)
@@ -109,6 +129,11 @@ function length(dic::ThreadSafeDict)
     return len
 end
 
+"""
+    iterate(dic::ThreadSafeDict)
+    
+Iterate through the Dict returning its key-value pairs. Note order might vary, even between runs of same contents.
+"""
 function iterate(dic::ThreadSafeDict)
     lock(dic.dlock)
     p = iterate(dic.d)
@@ -116,6 +141,11 @@ function iterate(dic::ThreadSafeDict)
     return p
 end
 
+"""
+    iterate(dic::ThreadSafeDict, i)
+    
+Iterate through the Dict returning its key-value pairs. Note order might vary, even between runs of same contents.
+"""
 function iterate(dic::ThreadSafeDict, i)
     lock(dic.dlock)
     p = iterate(dic.d, i)
@@ -123,6 +153,11 @@ function iterate(dic::ThreadSafeDict, i)
     return p
 end  
 
+"""
+    print(io::IO, dic::ThreadSafeDict)
+    
+Print the ThreadSafeDict, including the state of its lock and contents of the undelying Dict.
+"""
 function print(io::IO, dic::ThreadSafeDict)
     print(io, "Dict was ", islocked(dic.dlock) ? "locked" : "unlocked", ", contents: ")
     lock(dic.dlock)
