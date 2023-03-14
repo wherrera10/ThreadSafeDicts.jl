@@ -1,3 +1,5 @@
+""" ThreadSafeDicts package source code """
+
 module ThreadSafeDicts
 
 import Base.getindex, Base.setindex!, Base.get!, Base.get, Base.empty!, Base.pop!
@@ -6,7 +8,8 @@ import Base.haskey, Base.delete!, Base.print, Base.iterate, Base.length
 export ThreadSafeDict
 
 """ 
-    ThreadSafeDict(pairs::Vector{Pair{K,V}})   
+    ThreadSafeDict(pairs::Vector{Pair{K,V}})
+
 Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. All functions lock this lock, pass 
 arguments to the d member Dict, unlock the spinlock, and then return what is returned by the Dict.
 """
@@ -18,6 +21,11 @@ struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
 end
 ThreadSafeDict() = ThreadSafeDict{Any,Any}()
 
+"""
+    getindex(dic::ThreadSafeDict, k)
+    
+Get the value at key index k.
+"""
 function getindex(dic::ThreadSafeDict, k)
     lock(dic.dlock)
     v = getindex(dic.d, k)
@@ -25,6 +33,11 @@ function getindex(dic::ThreadSafeDict, k)
     return v
 end
 
+"""
+    setindex!(dic::ThreadSafeDict, k, v)
+    
+Set the value at key index k to v.
+"""
 function setindex!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     h = setindex!(dic.d, k, v)
@@ -32,6 +45,11 @@ function setindex!(dic::ThreadSafeDict, k, v)
     return h
 end
 
+"""
+    haskey(dic::ThreadSafeDict, k)
+
+Return true if key k is in the dict, else return false.
+"""
 function haskey(dic::ThreadSafeDict, k)
     lock(dic.dlock)
     b = haskey(dic.d, k)
@@ -39,6 +57,11 @@ function haskey(dic::ThreadSafeDict, k)
     return b
 end
 
+"""
+    get(dic::ThreadSafeDict, k, v)
+    
+Get value at key k if exists, otherwise return v
+"""
 function get(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     v = get(dic.d, k, v)
@@ -46,6 +69,11 @@ function get(dic::ThreadSafeDict, k, v)
     return v
 end
 
+"""
+    get!(dic::ThreadSafeDict, k, v)
+    
+Get value at key k if exists, otherwise set value at k to v and return v.
+"""
 function get!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     v = get!(dic.d, k, v)
