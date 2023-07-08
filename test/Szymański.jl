@@ -32,7 +32,6 @@ function runSzymański(id, allszy)
 
     # critical section
     addresult(id)
-    println("Thread ", id, " added to the list belonging to thread ", Threads.threadid(), ".")
     # end critical section
 
     # Exit protocol
@@ -54,4 +53,4 @@ function test_Szymański(N)
     @test 1:N == reduce(vcat, values(tdict)) |> sort!
 end
 
-test_Szymański(200)
+test_Szymański(20000)
