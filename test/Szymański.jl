@@ -8,7 +8,7 @@ flag(id) = get(iddict, id, 0)
 const tdict = Dict{Int, Vector{Int}}()
 addresult(id) = (tid = Threads.threadid(); tdict[tid] = vcat(get!(tdict, tid, Int[]), id))
 
-""" test the implementation on each thread, concurrently"""
+""" test the implementation on each thread, concurrently """
 function runSzymański(id, allszy)
     others = filter(!=(id), allszy)
     iddict[id] = 1                            # Standing outside waiting room
@@ -32,6 +32,7 @@ function runSzymański(id, allszy)
 
     # critical section
     addresult(id)
+    id % 100 == 0 && print(id, "...\b\b\b\b\b\b\b\b\b")
     # end critical section
 
     # Exit protocol
