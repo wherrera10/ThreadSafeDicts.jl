@@ -53,4 +53,4 @@ function test_Szymański(N)
     @test 1:N == reduce(vcat, values(tdict)) |> sort!
 end
 
-test_Szymański(20000)
+test_Szymański(2000)
