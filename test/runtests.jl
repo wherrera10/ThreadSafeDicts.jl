@@ -7,4 +7,9 @@ PerformanceTestTools.@include_foreach(
     ],
 )
 
-
+PerformanceTestTools.@include_foreach(
+    "Szymański.jl",
+    [nothing,
+    ["JULIA_NUM_THREADS" => string(Threads.nthreads())],
+    ],
+)
