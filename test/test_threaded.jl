@@ -36,6 +36,14 @@ function testThreadSafeDicts()
     
     empty!(dict)
 
+    y = 77
+    func() = isqrt(y)
+    x = get(func, dict, "another")
+    @test x == 8
+    @test !haskey(dict, "another")
+    
+    empty!(dict)
+
     Threads.@threads for i in 1:1000
         dict[string(i)] = i
     end
