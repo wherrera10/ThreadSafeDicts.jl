@@ -29,8 +29,11 @@ Get the value at key index k.
 """
 function getindex(dic::ThreadSafeDict, k)
     lock(dic.dlock)
-    v = getindex(dic.d, k)
-    unlock(dic.dlock)
+    try
+        v = getindex(dic.d, k)
+    finally
+        unlock(dic.dlock)
+    end
     return v
 end
 
@@ -41,8 +44,11 @@ Set the value at key index k to v.
 """
 function setindex!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
-    h = setindex!(dic.d, k, v)
-    unlock(dic.dlock)
+    try
+        h = setindex!(dic.d, k, v)
+    finally
+        unlock(dic.dlock)
+    end
     return h
 end
 
@@ -77,8 +83,11 @@ Get value at key k if exists, otherwise set value at k to v and return v.
 """
 function get!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
-    v = get!(dic.d, k, v)
-    unlock(dic.dlock)
+    try
+        v = get!(dic.d, k, v)
+    finally
+        unlock(dic.dlock)
+    end
     return v
 end
 
@@ -89,8 +98,11 @@ remove and return a key-value pair from the Dict
 """
 function pop!(dic::ThreadSafeDict)
     lock(dic.dlock)
-    p = pop!(dic.d)
-    unlock(dic.dlock)
+    try
+        p = pop!(dic.d)
+    finally
+        unlock(dic.dlock)
+    end
     return p
 end
 
@@ -162,8 +174,11 @@ Print the ThreadSafeDict, including the state of its lock and contents of the un
 function print(io::IO, dic::ThreadSafeDict)
     print(io, "Dict was ", islocked(dic.dlock) ? "locked" : "unlocked", ", contents: ")
     lock(dic.dlock)
-    print(io, dic.d)
-    unlock(dic.dlock)
+    try
+        print(io, dic.d)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 end # module
