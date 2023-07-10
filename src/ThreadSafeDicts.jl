@@ -122,7 +122,7 @@ Get value at key k if exists, otherwise set value at k to f() and return that va
 function get!(f::Function, dic::ThreadSafeDict, k)
     lock(dic.dlock)
     try
-        if haskey(dic.d)
+        if haskey(dic.d, k)
             v = dic.d[k]
             unlock(dic.dlock)
             return v
