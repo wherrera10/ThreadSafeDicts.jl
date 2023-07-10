@@ -108,10 +108,10 @@ function get!(dic::ThreadSafeDict, k, v)
         v = get!(dic.d, k, v)
         unlock(dic.dlock)
         return v
-    finally
+    catch
         unlock(dic.dlock)
         rethrow()
-    return
+    end
 end
 
 """
