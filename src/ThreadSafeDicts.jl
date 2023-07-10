@@ -31,10 +31,12 @@ function getindex(dic::ThreadSafeDict, k)
     lock(dic.dlock)
     try
         v = getindex(dic.d, k)
-    finally
         unlock(dic.dlock)
+        return v
+    catch
+        unlock(dic.dlock)
+        rethrow()
     end
-    return v
 end
 
 """
@@ -46,10 +48,12 @@ function setindex!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     try
         h = setindex!(dic.d, k, v)
-    finally
         unlock(dic.dlock)
+        return h
+    catch
+        unlock(dic.dlock)
+        rethrow()
     end
-    return h
 end
 
 """
@@ -85,10 +89,12 @@ function get!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     try
         v = get!(dic.d, k, v)
+        unlock(dic.dlock)
+        return v
     finally
         unlock(dic.dlock)
-    end
-    return v
+        rethrow()
+    return
 end
 
 """
@@ -100,10 +106,12 @@ function pop!(dic::ThreadSafeDict)
     lock(dic.dlock)
     try
         p = pop!(dic.d)
-    finally
         unlock(dic.dlock)
+        return p
+    catch
+        unlock(dic.dlock)
+        rethrow()
     end
-    return p
 end
 
 """
@@ -176,8 +184,10 @@ function print(io::IO, dic::ThreadSafeDict)
     lock(dic.dlock)
     try
         print(io, dic.d)
-    finally
         unlock(dic.dlock)
+    catch
+        unlock(dic.dlock)
+        rethrow()
     end
 end
 
