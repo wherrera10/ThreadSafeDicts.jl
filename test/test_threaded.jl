@@ -37,8 +37,9 @@ function testThreadSafeDicts()
     empty!(dict)
 
     y = 77
-    func() = isqrt(y)
-    x = get(func, dict, "another")
+    x = get(dict, "another") do
+        isqrt(y)
+    end
     @test x == 8
     @test !haskey(dict, "another")
     @test_throws KeyError dict["another"]
