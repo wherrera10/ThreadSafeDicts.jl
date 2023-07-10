@@ -41,6 +41,7 @@ function testThreadSafeDicts()
     x = get(func, dict, "another")
     @test x == 8
     @test !haskey(dict, "another")
+    @test_throws KeyError dict["another"]
     
     empty!(dict)
 
