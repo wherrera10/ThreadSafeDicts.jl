@@ -81,6 +81,23 @@ function get(dic::ThreadSafeDict, k, v)
 end
 
 """
+    get(f::Function, dic::ThreadSafeDict, k)
+    
+Get value at key k if exists, otherwise return f()
+"""
+function get(f::Function, dic::ThreadSafeDict, k)
+    lock(dic.dlock)
+    try
+        v = haskey(dic.d, k) ? dic.d[k] : f()
+        unlock(dic.dlock)
+        return v
+    catch
+        unlock(dic.dlock)
+        rethrow()
+    end
+end
+
+"""
     get!(dic::ThreadSafeDict, k, v)
     
 Get value at key k if exists, otherwise set value at k to v and return v.
@@ -97,6 +114,30 @@ function get!(dic::ThreadSafeDict, k, v)
     return
 end
 
+"""
+    get!(f::Function, dic::ThreadSafeDict, k)
+    
+Get value at key k if exists, otherwise set value at k to f() and return that value.
+"""
+function get!(f::Function, dic::ThreadSafeDict, k)
+    lock(dic.dlock)
+    try
+        if haskey(dic.d)
+            v = dic.d[k]
+            unlock(dic.dlock)
+            return v
+        else
+            v = f()
+            dic.d[k] = v
+            unlock(dic.dlock)
+            return v
+        end
+    catch
+        unlock(dic.dlock)
+        rethrow()
+    end
+end
+    
 """
     pop!(dic::ThreadSafeDict)
     
