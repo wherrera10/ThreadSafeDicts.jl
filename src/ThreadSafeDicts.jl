@@ -15,7 +15,7 @@ arguments to the d member Dict, unlock the spinlock, and then return what is ret
 """
 struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
     dlock::Threads.SpinLock
-    d::Dict
+    d::Dict{K, V}
     ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
     ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
 end
