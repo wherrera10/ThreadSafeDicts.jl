@@ -16,10 +16,15 @@ struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
     dlock::Threads.SpinLock
     d::Dict{K, V}
     ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
+    ThreadSafeDict{K, V}(d::Dict{K, V}) where V where K = new(Threads.SpinLock(), d)
     ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
 end
+ThreadSafeDict(d::Dict{K, V}) where V where K = ThreadSafeDict{K, V}(d)
 ThreadSafeDict() = ThreadSafeDict{Any,Any}()
-ThreadSafeDict(itr) = ThreadSafeDict{Any, Any}(itr) # for issue #12
+function ThreadSafeDict(itr)
+    d = Dict(itr)
+    ThreadSafeDict(d)
+end
 
 """
     getindex(dic::ThreadSafeDict, k)
