@@ -9,17 +9,16 @@ A thread-safe Dict type for Julia programming
 
 
 ## Structs and Functions
-<br />
-    
-    struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
-        dlock::Threads.SpinLock
-        d::Dict{K, V}
-        ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
-        ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
-    end
-    ThreadSafeDict() = ThreadSafeDict{Any,Any}()
-    ThreadSafeDict(pairs::Vector{Pair{K,V}})   
-<br />
+```julia
+struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
+    dlock::Threads.SpinLock
+    d::Dict{K, V}
+    ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
+    ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
+end
+ThreadSafeDict(d::Dict{K, V}) where V where K = ThreadSafeDict{K, V}(d)
+ThreadSafeDict() = ThreadSafeDict{Any,Any}()
+```
 
 Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. All functions lock this lock, pass 
 arguments to the d member Dict, unlock the spinlock, and then return what is returned by the Dict.
@@ -27,56 +26,34 @@ arguments to the d member Dict, unlock the spinlock, and then return what is ret
 If there are going to be a large number of threads competing to update the `Dict`, causing most of the threads to 
 be blocked at any given time, you may be better off keeping a `Dict` in a separate thread which accepts updates
 via a `Channel` of `Pair`s.  YMMMV. 
-<br /><br />
 
-    getindex(dic::ThreadSafeDict, k)
-<br />
+```julia
+getindex(dict::ThreadSafeDict, k)
+setindex!(dict::ThreadSafeDict, k, v)
+haskey(dict::ThreadSafeDict, k)
+get(dict::ThreadSafeDict, k, v)
+get!(dict::ThreadSafeDict, k, v)
+pop!(dict::ThreadSafeDict)
+empty!(dict::ThreadSafeDict)
+delete!(dict::ThreadSafeDict, k)
+length(dict::ThreadSafeDict)
+iterate(dict::ThreadSafeDict)
+iterate(dict::ThreadSafeDict, i)
+print(io::IO, dict::ThreadSafeDict)
+```
 
-    setindex!(dic::ThreadSafeDict, k, v)
-<br />
-
-    haskey(dic::ThreadSafeDict, k)
-<br />
-
-    get(dic::ThreadSafeDict, k, v)
-<br />
-
-    get!(dic::ThreadSafeDict, k, v)
-<br />
-
-    pop!(dic::ThreadSafeDict)
-<br />
-
-    empty!(dic::ThreadSafeDict)
-<br />
-
-    delete!(dic::ThreadSafeDict, k)
-<br />
-
-    length(dic::ThreadSafeDict)
-<br />
-
-    iterate(dic::ThreadSafeDict)
-<br />
-
-    iterate(dic::ThreadSafeDict, i)
-<br />
-
-    print(io::IO, dic::ThreadSafeDict)
-<br /><br />
-
-All of the above methods work as in those of the base Dict type. However, they all
-lock a spinlock prior to passing the arguments to a base Dict within the struct, then
-unlock the base Dict prior to returning the function call results. Thus, with a single
-thread the functions are equivalent to those of a base Dict, but with multiple threads
-thread access to the underlying Dict is serialized per ThreadSafeDict.
-
-## Installation
+All of the above methods work as in those of the base `Dict` type. However, they all
+lock a spinlock prior to passing the arguments to a base `Dict` within the struct, then
+unlock the base `Dict` prior to returning the function call results. Thus, with a single
+thread the functions are equivalent to those of a base `Dict`, but with multiple threads
+thread access to the underlying `Dict` is serialized per `ThreadSafeDict`.
 
 ## Installation
 
 You may install the package from Github in the usual way, or to install the current master copy:
-        
-    using Pkg
-    Pkg.add("http://github.com/wherrera10/ThreadSafeDicts.jl")
+
+```julia
+using Pkg
+Pkg.add("http://github.com/wherrera10/ThreadSafeDicts.jl")
+```
     
