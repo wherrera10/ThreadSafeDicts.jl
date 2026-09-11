@@ -31,7 +31,7 @@ arguments to the d member Dict, unlock the ReentrantLock, and then return what i
 ## Installation
 ```julia
 using Pkg
-Pkg.add("MyPackage")
+Pkg.add("ThreadSafeDicts")
 ```
 
 ## Functions Reference
@@ -41,5 +41,5 @@ This block automatically extracts docstrings from your source code:
 ```
 
 ```@autodocs
-Modules = [MyPackage]
+Modules = [ThreadSafeDicts]
 ```
