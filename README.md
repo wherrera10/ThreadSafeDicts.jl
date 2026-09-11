@@ -2,6 +2,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/wherrera10/ThreadSafeDicts.jl/badge.svg?branch=master)](https://coveralls.io/github/wherrera10/ThreadSafeDicts.jl?branch=master)
 
 # ThreadSafeDicts.jl
+
+<img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png" width='250'>
+
 A thread-safe `Dict` type for Julia programming
 
 ## Documentation
