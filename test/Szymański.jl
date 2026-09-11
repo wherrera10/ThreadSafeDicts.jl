@@ -5,11 +5,8 @@ using ThreadSafeDicts  # implement a single lock on all shared values as a task 
 const iddict = ThreadSafeDict{Int, Int}()
 flag(id) = get(iddict, id, 0)
 
-const tdict = Dict{Int, Vector{Int}}()
-addresult(id) = (tid = Threads.threadid(); tdict[tid] = vcat(get!(tdict, tid, Int[]), id))
-
 """ test the implementation on each thread, concurrently """
-function runSzymański(id, allszy)
+function runSzymański(id, allszy, tdict, inside)
     others = filter(!=(id), allszy)
     iddict[id] = 1                            # Standing outside waiting room
     while !all(t -> flag(t) < 3, others)      # Wait for open door
@@ -31,7 +28,11 @@ function runSzymański(id, allszy)
     end
 
     # critical section
-    addresult(id)
+    Threads.atomic_add!(inside, 1)
+    @test inside[] == 1
+    tid = Threads.threadid()
+    tdict[tid] = vcat(get!(tdict, tid, Int[]), id)
+    Threads.atomic_add!(inside, -1)
     id % 100 == 0 && print(id, "...\b\b\b\b\b\b\b\b\b")
     # end critical section
 
@@ -47,11 +48,17 @@ function runSzymański(id, allszy)
 end
 
 function test_Szymański(N)
+    empty!(iddict)
+    tdict = Dict{Int, Vector{Int}}()
+    inside = Threads.Atomic{Int}(0)
     allszy = collect(1:N)
     @Threads.threads for i in eachindex(allszy)
-        runSzymański(i, allszy)
+        runSzymański(i, allszy, tdict, inside)
     end
+    @test inside[] == 0
     @test 1:N == reduce(vcat, values(tdict)) |> sort!
 end
 
 test_Szymański(2000)
+
+true
