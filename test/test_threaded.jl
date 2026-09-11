@@ -118,7 +118,10 @@ function testThreadSafeDicts()
             dict[string(i)] = i
         end
 
-        @test ((x, y) = iterate(dict)) != nothing
+        state = iterate(dict)
+        @test state != nothing
+
+        y = state[2]
         @test iterate(dict, y) != nothing
         @test length(dict) == 1000
 
