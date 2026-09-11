@@ -6,9 +6,10 @@ makedocs(;
     modules=[ThreadSafeDicts],
     authors="William Herrera and various patch submitters",
     sitename="ThreadSafeDicts.jl Documentation",
+    repo="github.com/wherrera10/ThreadSafeDicts.jl.git",
     format=Documenter.HTML(;
         canonical="https://wherrera10.github.io/ThreadSafeDicts.jl",
-        edit_link="main",
+        edit_link="master",
         assets=String[],
     ),
     pages=[
@@ -19,6 +20,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/wherrera10/ThreadSafeDicts.jl.git",
-    devbranch="main", # Or "master" depending on your default branch
+    devbranch="master",
 )
-
