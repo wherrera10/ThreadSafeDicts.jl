@@ -83,6 +83,8 @@ function testThreadSafeDicts()
     dict["aftererror"] = 123
     @test dict["aftererror"] == 123
 
+    empty!(dict)
+    
     Threads.@threads for i in 1:1000
         dict[string(i)] = i
     end
