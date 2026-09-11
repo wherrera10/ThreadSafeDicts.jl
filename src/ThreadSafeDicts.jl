@@ -13,14 +13,17 @@ Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. Al
 arguments to the d member Dict, unlock the spinlock, and then return what is returned by the Dict.
 """
 struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
-    dlock::Threads.SpinLock
+    dlock::ReentrantLock
     d::Dict{K, V}
-    ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
-    ThreadSafeDict{K, V}(d::Dict{K, V}) where V where K = new(Threads.SpinLock(), d)
-    ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
+    ThreadSafeDict{K, V}() where V where K = new(ReentrantLock(), Dict{K, V}())
+    ThreadSafeDict{K, V}(d::Dict{K, V}) where V where K = new(ReentrantLock(), copy(d))
+    ThreadSafeDict{K, V}(itr) where V where K = new(ReentrantLock(), Dict{K, V}(itr))
 end
+
 ThreadSafeDict(d::Dict{K, V}) where V where K = ThreadSafeDict{K, V}(d)
+
 ThreadSafeDict() = ThreadSafeDict{Any,Any}()
+
 function ThreadSafeDict(itr)
     d = Dict(itr)
     ThreadSafeDict(d)
@@ -34,12 +37,9 @@ Get the value at key index k.
 function getindex(dic::ThreadSafeDict, k)
     lock(dic.dlock)
     try
-        v = getindex(dic.d, k)
+        dic.d[k]
+    finally
         unlock(dic.dlock)
-        return v
-    catch
-        unlock(dic.dlock)
-        rethrow()
     end
 end
 
@@ -51,12 +51,9 @@ Set the value at key index k to v.
 function setindex!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     try
-        h = setindex!(dic.d, k, v)
+        dic.d[k] = v
+    finally
         unlock(dic.dlock)
-        return h
-    catch
-        unlock(dic.dlock)
-        rethrow()
     end
 end
 
@@ -67,9 +64,11 @@ Return true if key k is in the dict, else return false.
 """
 function haskey(dic::ThreadSafeDict, k)
     lock(dic.dlock)
-    b = haskey(dic.d, k)
-    unlock(dic.dlock)
-    return b
+    try
+        haskey(dic.d, k)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
@@ -79,9 +78,11 @@ Get value at key k if exists, otherwise return v
 """
 function get(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
-    v = get(dic.d, k, v)
-    unlock(dic.dlock)
-    return v
+    try
+        get(dic.d, k, v)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
@@ -92,12 +93,9 @@ Get value at key k if exists, otherwise return f()
 function get(f::Function, dic::ThreadSafeDict, k)
     lock(dic.dlock)
     try
-        v = haskey(dic.d, k) ? dic.d[k] : f()
+        haskey(dic.d, k) ? dic.d[k] : f()
+    finally
         unlock(dic.dlock)
-        return v
-    catch
-        unlock(dic.dlock)
-        rethrow()
     end
 end
 
@@ -109,12 +107,9 @@ Get value at key k if exists, otherwise set value at k to v and return v.
 function get!(dic::ThreadSafeDict, k, v)
     lock(dic.dlock)
     try
-        v = get!(dic.d, k, v)
+        get!(dic.d, k, v)
+    finally
         unlock(dic.dlock)
-        return v
-    catch
-        unlock(dic.dlock)
-        rethrow()
     end
 end
 
@@ -127,21 +122,17 @@ function get!(f::Function, dic::ThreadSafeDict, k)
     lock(dic.dlock)
     try
         if haskey(dic.d, k)
-            v = dic.d[k]
-            unlock(dic.dlock)
-            return v
+            dic.d[k]
         else
             v = f()
             dic.d[k] = v
-            unlock(dic.dlock)
-            return v
+            v
         end
-    catch
+    finally
         unlock(dic.dlock)
-        rethrow()
     end
 end
-    
+
 """
     pop!(dic::ThreadSafeDict)
     
@@ -150,12 +141,27 @@ remove and return a key-value pair from the Dict
 function pop!(dic::ThreadSafeDict)
     lock(dic.dlock)
     try
-        p = pop!(dic.d)
+        pop!(dic.d)
+    finally
         unlock(dic.dlock)
-        return p
-    catch
+    end
+end
+
+function pop!(dic::ThreadSafeDict, k)
+    lock(dic.dlock)
+    try
+        pop!(dic.d, k)
+    finally
         unlock(dic.dlock)
-        rethrow()
+    end
+end
+
+function pop!(dic::ThreadSafeDict, k, default)
+    lock(dic.dlock)
+    try
+        pop!(dic.d, k, default)
+    finally
+        unlock(dic.dlock)
     end
 end
 
@@ -166,9 +172,11 @@ Remove all keys and values from the Dict
 """
 function empty!(dic::ThreadSafeDict)
     lock(dic.dlock)
-    d = empty!(dic.d)
-    unlock(dic.dlock)
-    return d
+    try
+        empty!(dic.d)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
@@ -178,9 +186,11 @@ delete key k and its value from the dict
 """
 function delete!(dic::ThreadSafeDict, k)
     lock(dic.dlock)
-    p = delete!(dic.d, k)
-    unlock(dic.dlock)
-    return p
+    try
+        delete!(dic.d, k)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
@@ -190,34 +200,39 @@ Return the length of the Dict, considered as a vector of key-value pairs
 """
 function length(dic::ThreadSafeDict)
     lock(dic.dlock)
-    len = length(dic.d)
-    unlock(dic.dlock)
-    return len
+    try
+        length(dic.d)
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
     iterate(dic::ThreadSafeDict)
     
-Iterate through the Dict returning its key-value pairs. Note order might vary, even between runs of same contents.
+Iterate through the Dict returning its key-value pairs.
 """
 function iterate(dic::ThreadSafeDict)
     lock(dic.dlock)
-    p = iterate(dic.d)
-    unlock(dic.dlock)
-    return p
+    try
+        d = collect(dic.d)
+        p = iterate(d)
+        p === nothing ? nothing : (p[1], (d, p[2]))
+    finally
+        unlock(dic.dlock)
+    end
 end
 
 """
     iterate(dic::ThreadSafeDict, i)
     
-Iterate through the Dict returning its key-value pairs. Note order might vary, even between runs of same contents.
+Iterate through the Dict returning its key-value pairs.
 """
 function iterate(dic::ThreadSafeDict, i)
-    lock(dic.dlock)
-    p = iterate(dic.d, i)
-    unlock(dic.dlock)
-    return p
-end  
+    d, state = i
+    p = iterate(d, state)
+    p === nothing ? nothing : (p[1], (d, p[2]))
+end
 
 """
     print(io::IO, dic::ThreadSafeDict)
@@ -225,15 +240,12 @@ end
 Print the ThreadSafeDict, including the state of its lock and contents of the undelying Dict.
 """
 function print(io::IO, dic::ThreadSafeDict)
-    print(io, "Dict was ", islocked(dic.dlock) ? "locked" : "unlocked", ", contents: ")
     lock(dic.dlock)
     try
-        print(io, dic.d)
+        print(io, "Dict was locked, contents: ", dic.d)
+    finally
         unlock(dic.dlock)
-    catch
-        unlock(dic.dlock)
-        rethrow()
     end
 end
 
-end # module
+end # module ThreadSafeDicts
