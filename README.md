@@ -12,10 +12,10 @@ See https://wherrera10.github.io/ThreadSafeDicts.jl/dev/
 
 You may install the package from the Julia REPL via ]add ThreadSafeDicts in the usual way, or to install the current master copy:
 
-julia```
+####
     using Pkg
     Pkg.add("http://github.com/wherrera10/ThreadSafeDicts.jl")
-```
+
 
 
     
