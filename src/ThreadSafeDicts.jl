@@ -48,7 +48,7 @@ end
     
 Set the value at key index k to v.
 """
-function setindex!(dic::ThreadSafeDict, k, v)
+function setindex!(dic::ThreadSafeDict, v, k)
     lock(dic.dlock)
     try
         dic.d[k] = v
