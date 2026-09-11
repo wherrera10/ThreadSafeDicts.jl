@@ -1,26 +1,33 @@
 # ThreadSafeDicts.jl
-A thread-safe Dict type for Julia programming
+A thread-safe `Dict` type for Julia programming
+
 <br>
 <img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png">
 <br><br>
 
-
 ## Structs and Functions
-<br>
 
-    struct ThreadSafeDict{K, V} <: AbstractDict{K, V}
-        dlock::Threads.SpinLock
-        d::Dict
-        ThreadSafeDict{K, V}() where V where K = new(Threads.SpinLock(), Dict{K, V}())
-        ThreadSafeDict{K, V}(itr) where V where K = new(Threads.SpinLock(), Dict{K, V}(itr))
-    end
-    ThreadSafeDict() = ThreadSafeDict{Any,Any}()
-    ThreadSafeDict(pairs::Vector{Pair{K,V}})
-<br>
+### `ThreadSafeDict`
+
+```julia
+struct ThreadSafeDict{K,V} <: AbstractDict{K,V}
+    dlock::ReentrantLock
+    d::Dict{K,V}
+    ThreadSafeDict{K,V}() where {K,V} = new(ReentrantLock(), Dict{K,V}())
+    ThreadSafeDict{K,V}(d::Dict{K,V}) where {K,V} =
+        new(ReentrantLock(), copy(d))
+    ThreadSafeDict{K,V}(itr) where {K,V} =
+        new(ReentrantLock(), Dict{K,V}(itr))
+end
+
+ThreadSafeDict()
+ThreadSafeDict(d::Dict{K,V}) where {K,V}
+ThreadSafeDict(itr)
 
 Struct and constructor for ThreadSafeDict. There is one lock per Dict struct. All functions lock this lock, pass
-arguments to the d member Dict, unlock the spinlock, and then return what is returned by the Dict.
+arguments to the d member Dict, unlock the ReentrantLock, and then return what is returned by the Dict.
 <br><br>
+
 
     getindex(dic::ThreadSafeDict, k)
 <br>
@@ -59,12 +66,11 @@ arguments to the d member Dict, unlock the spinlock, and then return what is ret
 <br><br>
 
 All of the above methods work as in those of the base Dict type. However, they all
-lock a spinlock prior to passing the arguments to a base Dict within the struct, then
+lock a ReentrantLock prior to passing the arguments to a base Dict within the struct, then
 unlock the base Dict prior to returning the function call results. Thus, with a single
 thread the functions are equivalent to those of a base Dict, but with multiple threads
 thread access to the underlying Dict is serialized per ThreadSafeDict.
 
-## Installation
 
 ## Installation
 
