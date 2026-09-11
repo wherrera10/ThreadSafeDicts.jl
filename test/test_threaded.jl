@@ -27,13 +27,19 @@ function testThreadSafeDicts()
     @test y == 0
     @test haskey(dict, "a") == true
 
+    @test pop!(dict, "extra") == 0
+    @test !haskey(dict, "extra")
+    @test pop!(dict, "missing", 99) == 99
+    @test_throws KeyError pop!(dict, "missing")
+
     empty!(dict)
 
     y = 77
     func() = isqrt(y)
     x = get!(func, dict, "another")
     @test x == 8
-    
+    @test dict["another"] == 8
+
     empty!(dict)
 
     y = 77
@@ -43,8 +49,39 @@ function testThreadSafeDicts()
     @test x == 8
     @test !haskey(dict, "another")
     @test_throws KeyError dict["another"]
-    
+
     empty!(dict)
+
+    dict["existing"] = 10
+    x = get!(dict, "existing") do
+        error("callback should not be called")
+    end
+    @test x == 10
+
+    x = get(dict, "existing") do
+        error("callback should not be called")
+    end
+    @test x == 10
+
+    empty!(dict)
+
+    dict["value"] = 10
+    x = get!(dict, "outer") do
+        dict["value"] + 5
+    end
+    @test x == 15
+    @test dict["outer"] == 15
+
+    x = get(dict, "another") do
+        dict["value"] + 7
+    end
+    @test x == 17
+
+    empty!(dict)
+
+    @test_throws KeyError dict["missing"]
+    dict["aftererror"] = 123
+    @test dict["aftererror"] == 123
 
     Threads.@threads for i in 1:1000
         dict[string(i)] = i
@@ -53,8 +90,33 @@ function testThreadSafeDicts()
     @test ((x, y) = iterate(dict)) != nothing
     @test iterate(dict, y) != nothing
 
-    @test length(dict.d) == 1000
+    @test length(dict) == 1000
     empty!(dict)
+
+    dict["a"] = 1
+    dict["b"] = 2
+    dict["c"] = 3
+    state = iterate(dict)
+    @test state != nothing
+    @test length(state[2][1]) == 3
+
+    dict["d"] = 4
+    delete!(dict, "a")
+
+    items = Pair[]
+    push!(items, state[1])
+    nextstate = state[2]
+    while (next = iterate(dict, nextstate)) !== nothing
+        push!(items, next[1])
+        nextstate = next[2]
+    end
+
+    @test length(items) == 3
+    @test Set(items) == Set(["a" => 1, "b" => 2, "c" => 3])
+    @test !("d" => 4 in items)
+
+    empty!(dict)
+
     Threads.@threads for i in 1:1000
         sleep(rand() / 100)
         dict["number"] = i
@@ -64,3 +126,5 @@ function testThreadSafeDicts()
 end
 
 testThreadSafeDicts()
+
+true
