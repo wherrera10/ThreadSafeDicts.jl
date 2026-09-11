@@ -115,7 +115,7 @@ function testThreadSafeDicts()
 
     @test length(items) == 3
     @test Set(items) == Set(["a" => 1, "b" => 2, "c" => 3])
-    @test !("d" => 4 in items)
+    @test !(("d" => 4) in items)
 
     empty!(dict)
 
