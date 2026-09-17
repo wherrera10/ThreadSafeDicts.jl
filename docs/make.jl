@@ -6,7 +6,7 @@ makedocs(;
     modules=[ThreadSafeDicts],
     authors="William Herrera and various patch submitters",
     sitename="ThreadSafeDicts.jl Documentation",
-    repo="github.com/wherrera10/ThreadSafeDicts.jl.git",
+    repo=Documenter.Remotes.GitHub("wherrera10", "ThreadSafeDicts.jl"),
     format=Documenter.HTML(;
         canonical="https://wherrera10.github.io/ThreadSafeDicts.jl",
         edit_link="master",
