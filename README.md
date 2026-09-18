@@ -3,7 +3,7 @@
 
 # ThreadSafeDicts.jl
 
-<img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/spool.png" width='250'>
+<img src="https://github.com/wherrera10/ThreadSafeDicts.jl/blob/master/docs/src/assets/spool.png" width='250'>
 
 A thread-safe `Dict` type for Julia programming
 
