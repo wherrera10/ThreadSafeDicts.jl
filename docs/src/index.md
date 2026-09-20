@@ -33,7 +33,7 @@ Pkg.add("ThreadSafeDicts")
 ```
 
 ## Functions Reference
-This block automatically extracts docstrings from your source code:
+
 
 ```@index
 ```
